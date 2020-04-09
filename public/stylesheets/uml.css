@@ -1,0 +1,279 @@
+@charset "UTF-8";
+
+.absolute-view {
+	display: inline-block;
+	position: absolute;
+	z-index: 1;
+	width: intrinsic;
+	width: -moz-max-content;
+	width: -webkit-max-content;
+	width: max-content;
+}
+
+.absolute-view > :not(.resize-handler) {
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+}
+
+.notch {
+	float: left;
+	position: relative;
+}
+
+.notch:before {
+	background: inherit;
+}
+
+.notch ~ * {
+	clear: left;
+}
+
+.border-box {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.border-view {
+	display: inline-block;
+	position: absolute;
+	z-index: 1;
+	width: intrinsic;
+	width: -moz-max-content;
+	width: -webkit-max-content;
+	width: max-content;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.content-view {
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
+.icon-shape {
+	display: block;
+}
+
+.resize-handler {
+	position: absolute;
+	width: 0.5rem;
+	height: 0.5rem;
+	display: block;
+	bottom: 0;
+	right: 0;
+	z-index: 2;
+	cursor: nwse-resize;
+	border-style: solid;
+	border-color: transparent rgba(17, 17, 17, 0.3) rgba(17, 17, 17, 0.3) transparent;
+	border-width: 0.4rem;
+}
+
+.resize-handler:hover {
+	background: rgba(17, 17, 17, 0.8);
+}
+
+.navigation-view {
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #FFFFFF;
+}
+
+.navigation-view * {
+	font-family: "RobotoMono Nerd Font", Roboto, Arial, sans-serif;
+}
+
+.navigation-view > div {
+	min-width: 100%;
+	min-height: 100%;
+}
+
+.navigation-view > div > div {
+	position: relative;
+}
+
+.navigation-view .select-box {
+	background: rgba(17, 17, 17, 0.2);
+	border: solid 2px #3498db;
+	position: absolute;
+	z-index: 2;
+}
+
+.navigation-view > canvas {
+	position: absolute;
+}
+
+.navigation-view input {
+	margin: 0;
+	padding: 0.1rem;
+	border-color: transparent;
+	background: transparent;
+	display: block;
+	color: #111;
+	width: 100%;
+}
+
+.navigation-view input:focus {
+	background: #FFFFFF;
+	color: #111;
+	border-color: #3498db;
+}
+
+.selected-view > .content-view, .selected-view > .icon-shape, .highlighted-view > .content-view, .highlighted-view > .icon-shape {
+	outline: solid 2px #3498db;
+}
+
+.snap-view > .content-view, .snap-view.icon-view {
+	outline: solid 2px #FFC107;
+}
+
+.snap-view > .content-view:after, .snap-view.icon-view:after {
+	content: "";
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 193, 7, 0.2);
+	display: block;
+	position: absolute;
+	z-index: 5;
+}
+
+.drop-target {
+	outline: solid 2px #3498db;
+	z-index: 2;
+}
+
+.drop-target:after {
+	content: "";
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(52, 152, 219, 0.2);
+	display: block;
+	position: absolute;
+	z-index: 5;
+}
+
+.html-label {
+	position: absolute;
+	transform: translate(-50%, -50%);
+	width: intrinsic;
+	width: -moz-max-content;
+	width: -webkit-max-content;
+	width: max-content;
+	z-index: 2;
+}
+
+.html-label input {
+	background-color: rgba(255, 255, 255, 0.6);
+	text-align: center;
+}
+
+.html-label input.empty {
+	background-color: transparent;
+}
+
+.html-label input:placeholder-shown {
+	background: transparent;
+}
+
+.html-label.focus input, .html-label input:hover, .html-label input:focus {
+	padding: 0.5rem;
+	background-color: rgba(255, 255, 255, 0.9);
+	border: 2px solid #BDBDBD;
+	border-radius: 0.2rem;
+}
+
+.html-label input:focus {
+	border-color: #3498db;
+}
+
+.jtk-connector {
+	z-index: 1;
+}
+
+.jtk-connector.jtk-dragging {
+	z-index: 2;
+}
+
+.jtk-endpoint {
+	visibility: hidden;
+}
+
+.connection-source {
+	position: absolute;
+	top: 0;
+	left: 100%;
+	width: 2rem;
+	height: 2rem;
+	background-color: #FFFFFF;
+	text-align: center;
+	line-height: 2rem;
+	margin: 0.5rem 0.5rem 0.5rem 0;
+	padding-left: 0.5rem;
+	font-size: 1.4rem;
+	display: none;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+*:hover > .connection-source {
+	display: block;
+}
+
+.absolute-view:hover > div > .connection-source {
+	display: block;
+}
+
+.target-disabled {
+	background: #AAA !important;
+}
+
+.double-border {
+	position: relative;
+}
+
+.double-border::after {
+	content: "";
+	position: absolute;
+	display: block;
+	top: 3px;
+	left: 3px;
+	bottom: 3px;
+	right: 3px;
+	border: inherit;
+	border-radius: inherit;
+}
+
+.left-double-border::after {
+	content: "";
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 5px;
+	bottom: 0;
+	border: inherit;
+	border-width: 0 0 0 2px;
+}
+
+.horizontal-view {
+	position: relative;
+}
+
+.horizontal-view > *:first-child {
+	position: absolute;
+	margin-left: -30px;
+}
