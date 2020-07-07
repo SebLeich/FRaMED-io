@@ -2,7 +2,8 @@ package io.framed.framework.render.html
 
 import de.westermann.kobserve.event.EventHandler
 import de.westermann.kobserve.event.EventListener
-import io.framed.framework.JsPlumbInstance
+import io.framed.framework.ConnlibInstance
+//import io.framed.framework.JsPlumbInstance
 import io.framed.framework.pictogram.BoxShape
 import io.framed.framework.pictogram.IconShape
 import io.framed.framework.pictogram.Shape
@@ -14,26 +15,26 @@ class HtmlShapeContainer(
         private val htmlRenderer: HtmlRenderer,
         private val containerShape: BoxShape,
         private val container: ViewCollection<View<*>, *>,
-        jsPlumbInstanceParent: JsPlumbInstance? = null,
+        connlibInstanceParent: ConnlibInstance? = null,
         private val parent: HtmlContentShape? = null
 ) {
 
-    val jsPlumbInstance = if (containerShape.position == BoxShape.Position.ABSOLUTE || jsPlumbInstanceParent == null) {
-        htmlRenderer.htmlConnections.createJsPlumb(container)
-    } else jsPlumbInstanceParent
+    val connlibInstance = if (containerShape.position == BoxShape.Position.ABSOLUTE || connlibInstanceParent == null) {
+        htmlRenderer.htmlConnections.createConnlib(container)
+    } else connlibInstanceParent
 
     private val shapeMap: MutableMap<Shape, HtmlShape> = mutableMapOf()
 
     fun create(shape: Shape): HtmlShape = when (shape) {
         is BoxShape -> {
             if (shape.position == BoxShape.Position.BORDER && parent != null) {
-                HtmlBorderShape(htmlRenderer, shape, parent, this, container, containerShape.position, jsPlumbInstance)
+                HtmlBorderShape(htmlRenderer, shape, parent, this, container, containerShape.position, connlibInstance)
             } else {
-                HtmlBoxShape(htmlRenderer, shape, parent, this, container, containerShape.position, jsPlumbInstance)
+                HtmlBoxShape(htmlRenderer, shape, parent, this, container, containerShape.position, connlibInstance)
             }
         }
-        is TextShape -> HtmlTextShape(htmlRenderer, shape, parent, this, container, jsPlumbInstance)
-        is IconShape -> HtmlIconShape(htmlRenderer, shape, parent, this, container, containerShape.position, jsPlumbInstance)
+        is TextShape -> HtmlTextShape(htmlRenderer, shape, parent, this, container, connlibInstance)
+        is IconShape -> HtmlIconShape(htmlRenderer, shape, parent, this, container, containerShape.position, connlibInstance)
         else -> throw UnsupportedOperationException()
     }
 

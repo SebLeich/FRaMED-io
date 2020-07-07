@@ -75,13 +75,13 @@ class HtmlRelation(
     override fun isChildOf(container: ViewCollection<View<*>, *>): Boolean = false
 
     private val references: MutableList<EventListener<*>> = mutableListOf()
-    private var connections: List<JsPlumbConnection> = emptyList()
+    private var connections: List<ConnlibConnection> = emptyList()
     private var labels: List<HtmlLabel> = emptyList()
 
     fun remove(complete: Boolean = false) {
-        if (this::jsPlumbInstance.isInitialized) {
+        if (this::connlibInstance.isInitialized) {
             connections.forEach {
-                jsPlumbInstance.deleteConnection(it)
+                connlibInstance.deleteConnection(it)
             }
             connections = emptyList()
         }
@@ -106,15 +106,15 @@ class HtmlRelation(
         val targetId = connection.target.value
 
         val instance = renderer.htmlConnections.findInstance(listOf(sourceId, targetId))
-        val box = renderer.htmlConnections.jsPlumbList.first { it.first == instance }.second
+        val box = renderer.htmlConnections.connlibList.first { it.first == instance }.second
 
         remove()
 
-        jsPlumbInstance = instance
+        connlibInstance = instance
         container = box
 
-        val sourceViewNew = renderer[sourceId, jsPlumbInstance] ?: return
-        val targetViewNew = renderer[targetId, jsPlumbInstance] ?: return
+        val sourceViewNew = renderer[sourceId, connlibInstance] ?: return
+        val targetViewNew = renderer[targetId, connlibInstance] ?: return
 
         if (!this::sourceView.isInitialized || sourceView != sourceViewNew) {
             sourceView = sourceViewNew
@@ -126,7 +126,7 @@ class HtmlRelation(
         val zIndex = listOfNotNull(sourceView.zIndex, targetView.zIndex).max() ?: 0
 
         // Click area
-        connections += jsPlumbInstance.connect(jsPlumbConnect {
+        connections += connlibInstance.connect(connlibConnect {
             source = sourceView.html
             target = targetView.html
 
@@ -136,7 +136,7 @@ class HtmlRelation(
             })
             endpoint = "Blank"
 
-            paintStyle = jsPlumbPaintStyle {
+            paintStyle = connlibPaintStyle {
                 stroke = "transparent"
                 strokeWidth = 15
             }
@@ -145,14 +145,14 @@ class HtmlRelation(
         }
 
         connection.lines.dropLast(1).forEach { line ->
-            connections += jsPlumbInstance.connect(createJsPlumbConnection(line, sourceView, targetView)).also {
+            connections += connlibInstance.connect(createConnlibConnection(line, sourceView, targetView)).also {
                 it.canvas.style.zIndex = zIndex.toString()
             }
         }
         connection.lines.lastOrNull()?.let { line ->
-            val init = createJsPlumbConnection(line, sourceView, targetView)
+            val init = createConnlibConnection(line, sourceView, targetView)
             createEndStyle(init)
-            connections += jsPlumbInstance.connect(init).also {
+            connections += connlibInstance.connect(init).also {
                 it.canvas.style.zIndex = zIndex.toString()
             }
         }
@@ -181,7 +181,7 @@ class HtmlRelation(
         }
     }
 
-    private fun createJsPlumbConnection(line: ConnectionLine, sourceView: View<*>, targetView: View<*>) = jsPlumbConnect {
+    private fun createConnlibConnection(line: ConnectionLine, sourceView: View<*>, targetView: View<*>) = connlibConnect {
         source = sourceView.html
         target = targetView.html
 
@@ -199,7 +199,7 @@ class HtmlRelation(
         }
         endpoint = "Blank"
 
-        paintStyle = jsPlumbPaintStyle {
+        paintStyle = connlibPaintStyle {
             stroke = if (isSelected) "#2980b9" else line.paintStyle.stroke.toCss()
             strokeWidth = line.paintStyle.strokeWidth
 
@@ -207,7 +207,7 @@ class HtmlRelation(
         }
     }
 
-    private fun createEndStyle(connectInit: JsPlumbConnectInit) {
+    private fun createEndStyle(connectInit: ConnlibConnectInit) {
         labels = connection.labels.map { label ->
             HtmlLabel(renderer, label, container).also {
                 it.view.onMouseDown { event ->
@@ -236,7 +236,7 @@ class HtmlRelation(
                 val width = style.width
                 val length = style.length
                 val foldback = style.foldback
-                val paintStyle = jsPlumbPaintStyle {
+                val paintStyle = connlibPaintStyle {
                     stroke = style.paintStyle.stroke.toCss()
                     strokeWidth = style.paintStyle.strokeWidth
                     fill = style.paintStyle.fill.toCss()
@@ -250,7 +250,7 @@ class HtmlRelation(
                 val width = style.width
                 val length = style.length
                 val foldback = style.foldback
-                val paintStyle = jsPlumbPaintStyle {
+                val paintStyle = connlibPaintStyle {
                     stroke = style.paintStyle.stroke.toCss()
                     strokeWidth = style.paintStyle.strokeWidth
                     fill = style.paintStyle.fill.toCss()
@@ -266,7 +266,7 @@ class HtmlRelation(
     private val sourceAnchorString: Array<Any>
         get() {
             val array = if (this::sourceView.isInitialized) {
-                renderer.htmlConnections.anchors[sourceView]?.map { it.jsPlumb }?.toTypedArray()
+                renderer.htmlConnections.anchors[sourceView]?.map { it.connlib }?.toTypedArray()
             } else null
             return (array ?: ALL_SIDES_ARRAY) as Array<Any>
         }
@@ -275,14 +275,14 @@ class HtmlRelation(
     private val targetAnchorString: Array<Any>
         get() {
             val array = if (this::targetView.isInitialized) {
-                renderer.htmlConnections.anchors[targetView]?.map { it.jsPlumb }?.toTypedArray()
+                renderer.htmlConnections.anchors[targetView]?.map { it.connlib }?.toTypedArray()
             } else null
             return (array ?: ALL_SIDES_ARRAY) as Array<Any>
         }
 
     lateinit var sourceView: View<*>
     lateinit var targetView: View<*>
-    lateinit var jsPlumbInstance: JsPlumbInstance
+    lateinit var connlibInstance: ConnlibInstance
     lateinit var container: ViewCollection<View<*>, *>
 
     init {
@@ -306,15 +306,15 @@ class HtmlRelation(
         val ALL_SIDES = setOf(RelationSide.TOP, RelationSide.LEFT, RelationSide.BOTTOM, RelationSide.RIGHT)
         val ALL_SIDES_ARRAY = ALL_SIDES.flatMap { side ->
             listOf(
-                    side.jsPlumb.map { if (it == 0.5) 0.25 else it }.toTypedArray(),
-                    side.jsPlumb,
-                    side.jsPlumb.map { if (it == 0.5) 0.75 else it }.toTypedArray()
+                    side.connlib.map { if (it == 0.5) 0.25 else it }.toTypedArray(),
+                    side.connlib,
+                    side.connlib.map { if (it == 0.5) 0.75 else it }.toTypedArray()
             )
         }.toTypedArray()
     }
 }
 
-enum class RelationSide(val jsPlumb: Array<Double>) {
+enum class RelationSide(val connlib: Array<Double>) {
     TOP(arrayOf(0.5, 0.0, 0.0, -1.0)),
     LEFT(arrayOf(0.0, 0.5, -1.0, 0.0)),
     BOTTOM(arrayOf(0.5, 1.0, 0.0, 1.0)),

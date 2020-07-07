@@ -1,7 +1,8 @@
 package io.framed.framework.render.html
 
 import de.westermann.kobserve.event.EventListener
-import io.framed.framework.JsPlumbInstance
+import io.framed.framework.ConnlibInstance
+//import io.framed.framework.JsPlumbInstance
 import io.framed.framework.pictogram.*
 import io.framed.framework.util.Dimension
 import io.framed.framework.util.Point
@@ -17,7 +18,7 @@ abstract class HtmlShape(
         val parent: HtmlContentShape?,
         parentContainer: HtmlShapeContainer,
         val container: ViewCollection<View<*>, *>,
-        open val jsPlumbInstance: JsPlumbInstance?
+        open val connlibInstance: ConnlibInstance?
 ) : Selectable {
     abstract val view: View<*>
 

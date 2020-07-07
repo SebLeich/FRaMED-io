@@ -3,6 +3,7 @@ package io.framed.framework.render.html
 import de.westermann.kobserve.event.EventHandler
 import de.westermann.kobserve.event.EventListener
 import de.westermann.kobserve.property.property
+import io.framed.framework.ConnlibInstance
 import io.framed.framework.JsPlumbInstance
 import io.framed.framework.pictogram.ContextEvent
 import io.framed.framework.pictogram.Shape
@@ -399,8 +400,8 @@ class HtmlRenderer(
         viewModel.container.onSidebar.emit(SidebarEvent(viewModel.container))
     }
 
-    operator fun get(id: Long, jsPlumbInstance: JsPlumbInstance): View<*>? = shapeMap
-            .filter { it.key.id?.let(::abs) == id && it.value.jsPlumbInstance == jsPlumbInstance }
+    operator fun get(id: Long, connlibInstance: ConnlibInstance): View<*>? = shapeMap
+            .filter { it.key.id?.let(::abs) == id && it.value.connlibInstance == connlibInstance }
             .values.sortedBy { it.shape.id }.firstOrNull()?.view
 
     fun getShapeById(id: String): Shape? = shapeMap.entries.find { (_, item) ->

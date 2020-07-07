@@ -1,6 +1,7 @@
 package io.framed.framework.render.html
 
-import io.framed.framework.JsPlumbInstance
+//import io.framed.framework.JsPlumbInstance
+import io.framed.framework.ConnlibInstance
 import io.framed.framework.pictogram.BoxShape
 import io.framed.framework.util.Point
 import io.framed.framework.util.async
@@ -17,8 +18,8 @@ class HtmlBoxShape(
         parentContainer: HtmlShapeContainer,
         container: ViewCollection<View<*>, *>,
         val position: BoxShape.Position,
-        override val jsPlumbInstance: JsPlumbInstance
-) : HtmlContentShape(htmlRenderer, shape, parent, parentContainer, container, jsPlumbInstance) {
+        override val connlibInstance: ConnlibInstance
+) : HtmlContentShape(htmlRenderer, shape, parent, parentContainer, container, connlibInstance) {
 
     override val positionView = container.listView {
         if (shape.style.notch) {
@@ -122,7 +123,7 @@ class HtmlBoxShape(
             htmlRenderer,
             shape,
             view,
-            jsPlumbInstance,
+            connlibInstance,
             this
     )
 

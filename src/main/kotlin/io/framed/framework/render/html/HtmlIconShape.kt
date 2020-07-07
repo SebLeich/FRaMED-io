@@ -1,5 +1,6 @@
 package io.framed.framework.render.html
 
+import io.framed.framework.ConnlibInstance
 import io.framed.framework.JsPlumbInstance
 import io.framed.framework.pictogram.BoxShape
 import io.framed.framework.pictogram.IconShape
@@ -15,8 +16,8 @@ class HtmlIconShape(
         parentContainer: HtmlShapeContainer,
         container: ViewCollection<View<*>, *>,
         val position: BoxShape.Position,
-        override val jsPlumbInstance: JsPlumbInstance
-) : HtmlShape(htmlRenderer, shape, parent, parentContainer, container, jsPlumbInstance) {
+        override val connlibInstance: ConnlibInstance
+) : HtmlShape(htmlRenderer, shape, parent, parentContainer, container, connlibInstance) {
 
     override val view: View<*> = container.listView {
         iconView(shape.property) {

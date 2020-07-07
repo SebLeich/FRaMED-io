@@ -1,5 +1,6 @@
 package io.framed.framework.render.html
 
+import io.framed.framework.ConnlibInstance
 import io.framed.framework.JsPlumbInstance
 import io.framed.framework.pictogram.TextShape
 import io.framed.framework.util.async
@@ -15,8 +16,8 @@ class HtmlTextShape(
         parent: HtmlContentShape?,
         parentContainer: HtmlShapeContainer,
         container: ViewCollection<View<*>, *>,
-        override val jsPlumbInstance: JsPlumbInstance
-) : HtmlShape(htmlRenderer, shape, parent, parentContainer, container, jsPlumbInstance) {
+        override val connlibInstance: ConnlibInstance
+) : HtmlShape(htmlRenderer, shape, parent, parentContainer, container, connlibInstance) {
 
     override val view: View<*> = container.inputView(shape.property) {
         style(this, shape.style)

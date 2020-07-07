@@ -1,10 +1,16 @@
 package io.framed.framework.render.html
 
 import de.westermann.kobserve.event.EventListener
+import io.framed.framework.Connlib
+import io.framed.framework.ConnlibInstance
+import io.framed.framework.connlibSourceOptionsInit
+import io.framed.framework.connlibTargetOptionsInit
+/*
 import io.framed.framework.JsPlumb
 import io.framed.framework.JsPlumbInstance
 import io.framed.framework.jsPlumbSourceOptionsInit
 import io.framed.framework.jsPlumbTargetOptionsInit
+ */
 import io.framed.framework.pictogram.Connection
 import io.framed.framework.pictogram.Shape
 import io.framed.framework.pictogram.ViewModel
@@ -28,18 +34,18 @@ class HtmlConnections(
 
     var relations: Map<Connection, HtmlRelation> = emptyMap()
     val anchors: MutableMap<View<*>, Set<RelationSide>> = mutableMapOf()
-    var jsPlumbList: List<Pair<JsPlumbInstance, ViewCollection<View<*>, *>>> = emptyList()
+    var connlibList: List<Pair<ConnlibInstance, ViewCollection<View<*>, *>>> = emptyList()
 
     private var isConnecting: Shape? = null
 
     fun remove() {
         relations.values.forEach { it.remove(true) }
-        for ((it, _) in jsPlumbList) {
+        for ((it, _) in connlibList) {
             it.deleteEveryConnection()
             it.deleteEveryEndpoint()
             it.reset()
         }
-        jsPlumbList = emptyList()
+        connlibList = emptyList()
 
         for (it in listeners) {
             it.detach()
@@ -55,9 +61,9 @@ class HtmlConnections(
     private var createSourceShape: Shape? = null
     private var createTargetShape: Shape? = null
 
-    fun createJsPlumb(container: ViewCollection<View<*>, *>): JsPlumbInstance {
-        val instance = JsPlumb.getInstance().apply {
-            setContainer(container.html)
+    fun createConnlib(container: ViewCollection<View<*>, *>): ConnlibInstance {
+        val instance = Connlib.getInstance().apply {
+            setContainer(container, viewModel.layer.get())
 
             var reference: EventListener<*>? = null
 
@@ -116,20 +122,20 @@ class HtmlConnections(
             }
         }
 
-        jsPlumbList += instance to container
+        connlibList += instance to container
 
         return instance
     }
 
-    fun findInstance(idList: List<Long>): JsPlumbInstance {
+    fun findInstance(idList: List<Long>): ConnlibInstance {
         val list = htmlRenderer.shapeMap.filterKeys { it.id in idList }.values.mapNotNull {
-            it.jsPlumbInstance
+            it.connlibInstance
         }.distinct()
 
         return if (list.size == 1) {
             list.first()
         } else {
-            jsPlumbList.firstOrNull { it.first in list }?.first ?: jsPlumbList.first().first
+            connlibList.firstOrNull { it.first in list }?.first ?: connlibList.first().first
         }
     }
 
@@ -161,7 +167,7 @@ class HtmlConnections(
     }
 
     fun revalidate(html: HTMLElement) {
-        for ((instance, _) in jsPlumbList) {
+        for ((instance, _) in connlibList) {
             try {
                 instance.revalidate(html)
             } catch (e: dynamic) {
@@ -191,11 +197,11 @@ class HtmlConnections(
 
     private fun setSourceEnabled(shape: Shape, enabled: Boolean) {
         val endpointItem = endpointMap[shape] ?: return
-        val jsPlumbInstance = endpointItem.jsPlumbInstance
+        val connlibInstance = endpointItem.connlibInstance
         val view = endpointItem.view
         val html = view.html
 
-        if (jsPlumbInstance.isSourceEnabled(html) != enabled) {
+        if (connlibInstance.isSourceEnabled(html) != enabled) {
             //jsPlumbInstance.setSourceEnabled(html)
         }
 
@@ -204,11 +210,11 @@ class HtmlConnections(
 
     private fun setTargetEnabled(shape: Shape, enabled: Boolean) {
         val endpointItem = endpointMap[shape] ?: return
-        val jsPlumbInstance = endpointItem.jsPlumbInstance
+        val connlibInstance = endpointItem.connlibInstance
         val view = endpointItem.view
         val html = view.html
 
-        if (jsPlumbInstance.isTargetEnabled(html) != enabled) {
+        if (connlibInstance.isTargetEnabled(html) != enabled) {
             //jsPlumbInstance.setTargetEnabled(html)
         }
 
@@ -245,7 +251,7 @@ class HtmlConnections(
 
         val view = htmlRenderer.shapeMap[shape]?.view ?: return
         val html = view.html
-        val jsPlumbInstance = jsPlumbList.firstOrNull()?.first ?: return
+        val connlibInstance = connlibList.firstOrNull()?.first ?: return
 
         val handler = if (canStart) {
             val handler = IconView(MaterialIcon.ADD)
@@ -257,7 +263,7 @@ class HtmlConnections(
                 it.stopPropagation()
             }
 
-            jsPlumbInstance.makeSource(html, jsPlumbSourceOptionsInit {
+            connlibInstance.makeSource(html, connlibSourceOptionsInit {
                 filter = { event, _ ->
                     val target = event.target as HTMLElement
                     target == handler.html || target.parentElement == handler.html
@@ -267,11 +273,11 @@ class HtmlConnections(
             handler
         } else null
 
-        jsPlumbInstance.makeTarget(html, jsPlumbTargetOptionsInit {
+        connlibInstance.makeTarget(html, connlibTargetOptionsInit() {
             allowLoopback = false
         })
 
-        endpointMap[shape] = EndpointItem(view, handler?.html, jsPlumbInstance)
+        endpointMap[shape] = EndpointItem(view, handler?.html, connlibInstance)
         endpointReverseMap[view.html] = shape
 
         setSourceEnabled(shape, true)
@@ -283,7 +289,7 @@ class HtmlConnections(
      */
     private fun deleteEndpointInternal(shape: Shape) {
         val endpointItem = endpointMap[shape] ?: return
-        val jsPlumbInstance = endpointItem.jsPlumbInstance
+        val jsPlumbInstance = endpointItem.connlibInstance
         val view = endpointItem.view
         val html = view.html
 
@@ -333,6 +339,6 @@ class HtmlConnections(
     class EndpointItem(
             val view: View<*>,
             val handler: HTMLElement?,
-            val jsPlumbInstance: JsPlumbInstance
+            val connlibInstance: ConnlibInstance
     )
 }

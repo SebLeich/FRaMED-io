@@ -1,5 +1,6 @@
 package io.framed.framework.render.html
 
+import io.framed.framework.ConnlibInstance
 import io.framed.framework.JsPlumbInstance
 import io.framed.framework.pictogram.BoxShape
 import io.framed.framework.view.View
@@ -13,8 +14,8 @@ class HtmlBorderShape(
         parentContainer: HtmlShapeContainer,
         container: ViewCollection<View<*>, *>,
         val position: BoxShape.Position,
-        override val jsPlumbInstance: JsPlumbInstance
-) : HtmlContentShape(htmlRenderer, shape, parent, parentContainer, container, jsPlumbInstance) {
+        override val connlibInstance: ConnlibInstance
+) : HtmlContentShape(htmlRenderer, shape, parent, parentContainer, container, connlibInstance) {
 
     private val realContainer: ViewCollection<View<*>, *> = (parent as HtmlBoxShape).positionView
 
@@ -30,7 +31,7 @@ class HtmlBorderShape(
             htmlRenderer,
             shape,
             view,
-            jsPlumbInstance,
+            connlibInstance,
             this
     )
 

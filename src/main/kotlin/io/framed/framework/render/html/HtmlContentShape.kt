@@ -1,6 +1,7 @@
 package io.framed.framework.render.html
 
-import io.framed.framework.JsPlumbInstance
+import io.framed.framework.ConnlibInstance
+//import io.framed.framework.JsPlumbInstance
 import io.framed.framework.pictogram.Shape
 import io.framed.framework.view.View
 import io.framed.framework.view.ViewCollection
@@ -11,7 +12,7 @@ abstract class HtmlContentShape(
         parent: HtmlContentShape?,
         parentContainer: HtmlShapeContainer,
         container: ViewCollection<View<*>, *>,
-        jsPlumbInstance: JsPlumbInstance?
-) : HtmlShape(htmlRenderer, shape, parent, parentContainer, container, jsPlumbInstance) {
+        connlibInstance: ConnlibInstance?
+) : HtmlShape(htmlRenderer, shape, parent, parentContainer, container, connlibInstance) {
     abstract val content: HtmlShapeContainer
 }
